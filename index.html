@@ -517,6 +517,8 @@
 		return emoji;
 	}
 
+
+	
 	function matchFix(input) {
 		var ouput = input.replace(/\(/gm, "左括号");
 		ouput = ouput.replace(/\)/gm, "右括号");
@@ -600,7 +602,7 @@
 				key = key.toLowerCase();
 				
 				if (dic.match(key)) {
-					if (!matchFix(result.join()).match(matchFix(output))) {//去除重复项目
+					if (!result.join().match(output)) {//去除重复项目
 						result.push(output);
 						htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
 					}
