@@ -89,6 +89,13 @@
 					position: relative;
 					padding: 100px 20px;
 				}
+				.search
+				{
+					font-size: 1.25rem; /* 20 */
+					background-color: #c8dadf;
+					position: relative;
+					padding: 2px 2px;
+				}
 				.box.has-advanced-upload
 				{
 					outline: 2px dashed #92b0b3;
@@ -279,18 +286,20 @@
 
 
 
+		<form action="JavaScript:search()" class="search">
+			<input placeholder="请输入搜索关键字" type="text" id="keyWords" autofocus="autofocus" /><input type="submit" />
+
+		</form>
+
+		<div id="myDiv" class="box"></div>
+
+
+
 		<footer>
 			<p><strong>请上传正确格式的update.json文件，格式参见<a href='./update.json'>demo</a></strong></p>
 			<p><strong>浏览器可能会拦截自动下载，请手动允许！</strong></p>
 			</code>
 		</footer>
-
-		<form action="JavaScript:search()" class="box">
-			<input placeholder="请输入搜索关键字" type="text" id="keyWords" autofocus="autofocus" /><input type="submit" />
-
-		</form>
-
-
 	</div>
 
 
@@ -477,44 +486,135 @@
 	<script>
 		'use strict';
 
+	function emoji(suffix) {
+		var emoji;
 
-			function search() {
-				var keyWords = document.getElementById("keyWords").value;
-				
-
-						var ajax = new XMLHttpRequest();
-						var url = "https://shimo.im/smapi/files/K8CWmBMqMtYYpU1f/discussions";
-						ajax.open("GET", url, true);
-				
-						ajax.send();
-						alert(ajax.status);
-						ajax.onload = function () {
-							
-							if (ajax.status >= 200 && ajax.status < 400) {
-						
-								alert("sdfdasfs");
-								// form.classList.add(data ? 'is-success' : 'is-error');
-								// if (!data) errorMsg.textContent = data.error;
-								// var blob = new Blob([ajax.responseText], { type: "application/json" })
-								// var url = URL.createObjectURL(blob)
-								// var link = document.createElement('a')
-								// link.href = url
-								// link.download = 'gui-config.json'
-								// document.body.appendChild(link);
-
-								// link.click();
-
-								// document.body.removeChild(link);
-							}
-							else alert('错误，请联系开发者！');
-						};
-
-
-
-
-				document.getElementById("keyWords").value = '';//清空输入框
-				alert(keyWords);
+		if (suffix.match(/[a-zA-Z]/g)) {
+			if (suffix.match(/mp4|mov|avi/ig)) {//根据后缀给出emoji
+				emoji = "🎬";//常规视频文件
+			} else if (suffix.match(/webm|mkv|avi/ig)) {
+				emoji = "▶️";//手机无法播放的非常规视频文件
+			} else if (suffix.match(/mp3|ogg|wav|flac|ape|alca|aac/ig)) {
+				emoji = "🎵";//音频文件
+			} else if (suffix.match(/zip|7z|rar/ig)) {
+				emoji = "📦";//压缩包
+			} else if (suffix.match(/dmg|iso/ig)) {
+				emoji = "💽";//光盘映像
+			} else if (suffix.match(/ai|psd|aep/ig)) {
+				emoji = "📐";//工程文件
+			} else if (suffix.match(/ppt|pptx|key/ig)) {
+				emoji = "📽️";//演示文件
+			} else if (suffix.match(/ttf|otf/ig)) {
+				emoji = "🔤️";//字体文件
+			} else if (suffix.match(/doc|pdf/ig)) {
+				emoji = "️📄";//文档
+			} else {
+				emoji = "❓";//未知格式
 			}
+		} else {
+			emoji = suffix;
+		}
+		return emoji;
+	}
+
+	function matchFix(input) {
+		var ouput = input.replace(/\(/gm, "左括号");
+		ouput = ouput.replace(/\)/gm, "右括号");
+		ouput = ouput.replace(/\[/gm, "左中括号");
+		ouput = ouput.replace(/\]/gm, "左中括号");
+		ouput = ouput.replace(/\"/gm, "引号");
+		ouput = ouput.replace(/\“/gm, "左引号");
+		ouput = ouput.replace(/\”/gm, "右引号");
+		ouput = ouput.replace(/\\/gm, "斜杠");
+		ouput = ouput.replace(/\-/gm, "破折号");
+		ouput = ouput.replace(/\s/gm, "空格");
+		ouput = ouput.replace(/\「/gm, "左引号");
+		ouput = ouput.replace(/\」/gm, "右引号");
+		ouput = ouput.replace(/\|/gm, "竖杠");
+		ouput = ouput.replace(/\:/gm, "冒号");
+		ouput = ouput.replace(/\!/gm, "感叹号");
+		ouput = ouput.replace(/\?/gm, "问号");
+		ouput = ouput.replace(/\+/gm, "加号");
+		ouput = ouput.replace(/\./gm, "小数点");
+		ouput = ouput.replace(/\$/gm, "美金符号");
+		return ouput;
+	} 
+
+		function getContentList(resp){
+			var contentList = new Array;
+			var list = resp.data.list;
+		
+			for (var i = 0; i < list.length; i++) {
+
+				var id = list[i].id;
+				var content = list[i].data.content;
+				var unixus = list[i].unixus;
+
+				contentList.push({ 'content': content, 'id': id, 'unixus': unixus });
+			}
+
+			return contentList
+		}
+
+		function searchBy(keyWords){
+
+			var xmlhttp;
+				if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp = new XMLHttpRequest();
+				}
+				else {// code for IE6, IE5
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function () {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						var respText = xmlhttp.responseText;
+						var resp = JSON.parse(respText);
+						
+
+
+						var key = keyWords;
+						var list = getContentList(resp);
+
+						var result = new Array;
+						
+						for (var i = 0;i<list.length;i++) {//按照原字词去查找
+							
+							var item = JSON.parse(list[i].content);
+						
+							var output = emoji(item.type) + ' ' + item.name + ' | ' + item.shortURL;
+							var dic = emoji(item.type) + item.name + item.name_trans;
+							dic = dic.toLowerCase();
+							key = key.toLowerCase();
+							
+							if (dic.match(key)) {
+								if (!matchFix(result.join()).match(matchFix(output))) {//去除重复项目
+									result.push(output);
+								}
+							}
+						}
+						
+						// alert(result);
+						document.getElementById("myDiv").innerHTML = result.join('\n');
+					}
+				}
+				xmlhttp.open("GET", "https://script.google.com/macros/s/AKfycbzOxOYt8O_8eH1PBlqEGmuDYO1WaC_OFFsdFVkrrN94QZVGFco/exec", true);
+				xmlhttp.send();
+			
+		}
+
+		function search() {
+			var keyWords = document.getElementById("keyWords").value;
+			var theJSON = document.getElementById("myDiv").innerHTML;
+			if(!keyWords){
+				alert("关键词不能为空");
+				return
+			}
+
+			searchBy(keyWords);
+			
+			// document.getElementById("keyWords").value = '';//清空输入框
+			//alert(keyWords);
+		}
 
 		; (function (document, window, index) {
 			// feature detection for drag&drop upload
