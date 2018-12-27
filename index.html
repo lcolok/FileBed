@@ -636,7 +636,7 @@
 					if (!result.join().match(output)) {//去除重复项目
 						result.push(output);
 						// htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
-						htmlContent += `<div id="btn" data-clipboard-text="${output}"><span>${emoji(item.type)} ${item.name}</span></div>`
+						htmlContent += `<div><span style="cursor:pointer" id="btn" data-clipboard-text="${output}">${emoji(item.type)} ${item.name}</span></div>`
 					}
 				}
 			
