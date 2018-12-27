@@ -91,10 +91,21 @@
 				}
 				.search
 				{
-					font-size: 1.25rem; /* 20 */
+					font-size: 1.00rem; /* 20 */
 					background-color: #c8dadf;
 					position: relative;
 					padding: 2px 2px;
+				}
+				.result
+				{
+					font-size: 1.00rem; /* 20 */
+					background-color: #c8dadf;
+					position: relative;
+					padding: 5px 5px;
+					/* text-align: left; */
+					/* border: 1px dotted black; */
+					/* width: 50%; */
+
 				}
 				.box.has-advanced-upload
 				{
@@ -245,6 +256,11 @@
 							background-color: #0f3c4b;
 						}
 
+
+
+
+
+
 	</style>
 
 	<!-- remove this if you use Modernizr -->
@@ -291,7 +307,7 @@
 
 		</form>
 
-		<div id="myDiv" class="box"></div>
+		<div id="myDiv" class="result"></div>
 
 
 
@@ -620,7 +636,7 @@
 					if (!result.join().match(output)) {//去除重复项目
 						result.push(output);
 						// htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
-						htmlContent += `<div id="btn" data-clipboard-text="${output}"><span>${output}</span></div>`
+						htmlContent += `<div id="btn" data-clipboard-text="${output}"><span>${emoji(item.type)} ${item.name}</span></div>`
 					}
 				}
 			
