@@ -575,32 +575,50 @@
 						var key = keyWords;
 						var list = getContentList(resp);
 
-						var result = new Array;
-						
-						for (var i = 0;i<list.length;i++) {//按照原字词去查找
-							
-							var item = JSON.parse(list[i].content);
-						
-							var output = emoji(item.type) + ' ' + item.name + ' | ' + item.shortURL;
-							var dic = emoji(item.type) + item.name + item.name_trans;
-							dic = dic.toLowerCase();
-							key = key.toLowerCase();
-							
-							if (dic.match(key)) {
-								if (!matchFix(result.join()).match(matchFix(output))) {//去除重复项目
-									result.push(output);
-								}
-							}
-						}
+	
 						
 						// alert(result);
-						document.getElementById("myDiv").innerHTML = result.join('\n');
+						
+						document.getElementById("myDiv").innerHTML = makeHTML(list,key);
 					}
 				}
 				xmlhttp.open("GET", "https://script.google.com/macros/s/AKfycbzOxOYt8O_8eH1PBlqEGmuDYO1WaC_OFFsdFVkrrN94QZVGFco/exec", true);
 				xmlhttp.send();
 			
 		}
+		function makeHTML(list,key){
+			var htmlContent = "";
+			var result = new Array;
+						
+			for (var i = 0;i<list.length;i++) {//按照原字词去查找
+				
+				var item = JSON.parse(list[i].content);
+			
+				var output = emoji(item.type) + ' ' + item.name + ' | ' + item.shortURL;
+				var dic = emoji(item.type) + item.name + item.name_trans;
+				dic = dic.toLowerCase();
+				key = key.toLowerCase();
+				
+				if (dic.match(key)) {
+					if (!matchFix(result.join()).match(matchFix(output))) {//去除重复项目
+						result.push(output);
+						htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
+					}
+				}
+
+
+			}
+
+
+
+			return htmlContent;
+		}
+
+			function copyUrl(i) {
+				var Url = document.getElementById(i);
+				Url.select(); // 选择对象 
+				document.execCommand("Copy"); // 执行浏览器复制命令 
+			}
 
 		function search() {
 			var keyWords = document.getElementById("keyWords").value;
@@ -609,6 +627,7 @@
 				alert("关键词不能为空");
 				return
 			}
+			document.getElementById("myDiv").innerHTML = "🔍搜索中...";
 
 			searchBy(keyWords);
 			
