@@ -483,6 +483,10 @@
 
 -->
 	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+
+	
+
 	<script>
 		'use strict';
 
@@ -582,6 +586,17 @@
 						// alert(result);
 						
 						document.getElementById("myDiv").innerHTML = makeHTML(list,key);
+
+						var btns = document.querySelectorAll('button');
+						var clipboard = new ClipboardJS(btn);
+
+						clipboard.on('success', function (e) {
+							console.log(e);
+						});
+
+						clipboard.on('error', function (e) {
+							console.log(e);
+						});
 					}
 				}
 				xmlhttp.open("GET", "https://script.google.com/macros/s/AKfycbzOxOYt8O_8eH1PBlqEGmuDYO1WaC_OFFsdFVkrrN94QZVGFco/exec", true);
@@ -604,10 +619,11 @@
 				if (dic.match(key)) {
 					if (!result.join().match(output)) {//去除重复项目
 						result.push(output);
-						htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
+						// htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
+						htmlContent += `<div id="btn" data-clipboard-text="${output}"><span>${output}</span></div>`
 					}
 				}
-
+			
 
 			}
 
