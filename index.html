@@ -312,6 +312,8 @@
 
 
 		<footer>
+			<button type="button" onclick="download('t.cn/EbziCEo')"><img width="13" height="auto" src="https://attachments-cdn.shimo.im/TAZOzBTHYtkmk7YB/播放.svg" /> 播放</button>
+
 			<p><strong>请上传正确格式的update.json文件，格式参见<a href='./update.json'>demo</a></strong></p>
 			<p><strong>浏览器可能会拦截自动下载，请手动允许！</strong></p>
 			</code>
@@ -636,7 +638,11 @@
 					if (!result.join().match(output)) {//去除重复项目
 						result.push(output);
 						// htmlContent += `<p><input type="text" onclick="copyUrl(${i})" id="${i}" value="${output}" size="60" readonly></p>`;
-						htmlContent += `<div><span style="cursor:pointer" id="btn" data-clipboard-text="${output}">${emoji(item.type)} ${item.name}</span></div>`
+						htmlContent += `<div align="left">
+											<span style="cursor:pointer" id="btn" data-clipboard-text="${output}">${emoji(item.type)} ${item.name}</span>
+											<button type="button" onclick="download(${item.shortURL})"><img width="18" height="auto" src="https://attachments-cdn.shimo.im/3bXboA1A7v4tMzZ8/下载.svg" /> 下载</button> 
+											<button type="button" onclick="play(${item.shortURL})"><img width="13" height="auto" src="https://attachments-cdn.shimo.im/TAZOzBTHYtkmk7YB/播放.svg" /> 播放</button>
+										</div>`
 					}
 				}
 			
@@ -646,6 +652,47 @@
 
 
 			return htmlContent;
+		}
+		function play(url){
+			var xmlhttp;
+				if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp = new XMLHttpRequest();
+				}
+				else {// code for IE6, IE5
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function () {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						var respText = xmlhttp.responseText;
+						window.open(respText);
+					}
+				}
+				var params = "url="+url;
+			
+				xmlhttp.open("POST", "https://script.google.com/macros/s/AKfycbzOxOYt8O_8eH1PBlqEGmuDYO1WaC_OFFsdFVkrrN94QZVGFco/exec", true);
+				xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				xmlhttp.send(params);
+		}
+
+		function download(url){
+			var xmlhttp;
+				if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp = new XMLHttpRequest();
+				}
+				else {// code for IE6, IE5
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function () {
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						var respText = xmlhttp.responseText;
+						window.open(respText+"?download");
+					}
+				}
+				var params = "url="+url;
+			
+				xmlhttp.open("POST", "https://script.google.com/macros/s/AKfycbzOxOYt8O_8eH1PBlqEGmuDYO1WaC_OFFsdFVkrrN94QZVGFco/exec", true);
+				xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				xmlhttp.send(params);
 		}
 
 			function copyUrl(i) {
